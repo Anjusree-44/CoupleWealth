@@ -4,6 +4,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { CoupleProvider, useCouple } from "@/context/CoupleContext";
+import { LanguageProvider } from "@/context/LanguageContext";
 import Onboarding from "./pages/Onboarding";
 import Dashboard from "./pages/Dashboard";
 import GoalPlanner from "./pages/GoalPlanner";
@@ -32,11 +33,13 @@ const App = () => (
     <TooltipProvider>
       <Toaster />
       <Sonner />
-      <CoupleProvider>
-        <BrowserRouter>
-          <AppRoutes />
-        </BrowserRouter>
-      </CoupleProvider>
+      <LanguageProvider>
+        <CoupleProvider>
+          <BrowserRouter>
+            <AppRoutes />
+          </BrowserRouter>
+        </CoupleProvider>
+      </LanguageProvider>
     </TooltipProvider>
   </QueryClientProvider>
 );

@@ -1,9 +1,10 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useCouple } from '@/context/CoupleContext';
+import { useLanguage } from '@/context/LanguageContext';
 import AppLayout from '@/components/AppLayout';
 import { planGoal, formatINR } from '@/utils/financial';
-import type { FinancialGoal, GoalType } from '@/types/finance';
+import type { GoalType } from '@/types/finance';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -20,6 +21,7 @@ const COLORS = ['hsl(168,55%,32%)', 'hsl(42,85%,55%)', 'hsl(210,80%,52%)'];
 
 export default function GoalPlannerPage() {
   const { data, addGoal, removeGoal } = useCouple();
+  const { t } = useLanguage();
   const [showForm, setShowForm] = useState(false);
   const [form, setForm] = useState({ name: '', type: 'house' as GoalType, targetAmount: 0, currentSavings: 0, timelineYears: 5, priority: 'medium' as 'high' | 'medium' | 'low' });
 
@@ -38,28 +40,28 @@ export default function GoalPlannerPage() {
       <div className="space-y-6">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="font-display text-2xl font-bold text-foreground">Goal Planner 🎯</h1>
-            <p className="text-sm text-muted-foreground">Plan and track your financial goals together</p>
+            <h1 className="font-display text-2xl font-bold text-foreground">{t('goalPlanner')} 🎯</h1>
+            <p className="text-sm text-muted-foreground">{t('planTrackGoals')}</p>
           </div>
-          <Button onClick={() => setShowForm(!showForm)} className="gap-2 bg-primary text-primary-foreground">
-            <Plus className="h-4 w-4" /> Add Goal
+          <Button onClick={() => setShowForm(!showForm)} className="gap-2 rounded-xl bg-primary text-primary-foreground shadow-glow">
+            <Plus className="h-4 w-4" /> {t('addGoal')}
           </Button>
         </div>
 
         {showForm && (
-          <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="rounded-xl border border-border bg-card p-6 shadow-card space-y-4">
+          <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="glass-card rounded-2xl p-6 space-y-4">
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-1.5">
-                <Label>Goal Name</Label>
+                <Label>{t('goalName')}</Label>
                 <Input value={form.name} onChange={e => setForm(p => ({ ...p, name: e.target.value }))} placeholder="e.g., Dream House" />
               </div>
               <div className="space-y-1.5">
-                <Label>Type</Label>
+                <Label>{t('type')}</Label>
                 <div className="flex flex-wrap gap-2">
-                  {(Object.keys(GOAL_EMOJIS) as GoalType[]).map(t => (
-                    <button key={t} onClick={() => setForm(p => ({ ...p, type: t }))}
-                      className={`rounded-lg border px-3 py-1.5 text-xs font-medium transition-all ${form.type === t ? 'border-primary bg-accent' : 'border-border hover:border-primary/30'}`}>
-                      {GOAL_EMOJIS[t]} {t}
+                  {(Object.keys(GOAL_EMOJIS) as GoalType[]).map(tp => (
+                    <button key={tp} onClick={() => setForm(p => ({ ...p, type: tp }))}
+                      className={`rounded-xl border px-3 py-1.5 text-xs font-medium transition-all ${form.type === tp ? 'border-primary bg-accent shadow-card' : 'border-border hover:border-primary/30'}`}>
+                      {GOAL_EMOJIS[tp]} {tp}
                     </button>
                   ))}
                 </div>
@@ -67,27 +69,27 @@ export default function GoalPlannerPage() {
             </div>
             <div className="grid grid-cols-3 gap-4">
               <div className="space-y-1.5">
-                <Label>Target Amount (₹)</Label>
+                <Label>{t('targetAmount')} (₹)</Label>
                 <Input type="number" value={form.targetAmount || ''} onChange={e => setForm(p => ({ ...p, targetAmount: Number(e.target.value) }))} />
               </div>
               <div className="space-y-1.5">
-                <Label>Current Savings (₹)</Label>
+                <Label>{t('currentSavings')} (₹)</Label>
                 <Input type="number" value={form.currentSavings || ''} onChange={e => setForm(p => ({ ...p, currentSavings: Number(e.target.value) }))} />
               </div>
               <div className="space-y-1.5">
-                <Label>Timeline (years)</Label>
+                <Label>{t('timeline')}</Label>
                 <Input type="number" value={form.timelineYears} onChange={e => setForm(p => ({ ...p, timelineYears: Number(e.target.value) }))} />
               </div>
             </div>
-            <Button onClick={handleAdd} className="bg-primary text-primary-foreground">Save Goal</Button>
+            <Button onClick={handleAdd} className="bg-primary text-primary-foreground rounded-xl">{t('saveGoal')}</Button>
           </motion.div>
         )}
 
         {data.combinedGoals.length === 0 && !showForm && (
           <div className="text-center py-16 text-muted-foreground">
             <Target className="h-12 w-12 mx-auto mb-4 opacity-30" />
-            <p className="font-display text-lg">No goals yet</p>
-            <p className="text-sm mt-1">Add your first financial goal to get started</p>
+            <p className="font-display text-lg">{t('noGoalsYet')}</p>
+            <p className="text-sm mt-1">{t('addFirstGoal')}</p>
           </div>
         )}
 
@@ -95,22 +97,23 @@ export default function GoalPlannerPage() {
           {data.combinedGoals.map((goal, i) => {
             const plan = planGoal(goal, avgRisk, avgAge);
             const allocData = [
-              { name: 'Equity', value: plan.equityPercent },
-              { name: 'Debt', value: plan.debtPercent },
-              { name: 'Gold', value: plan.goldPercent },
+              { name: t('equity'), value: plan.equityPercent },
+              { name: t('debt'), value: plan.debtPercent },
+              { name: t('gold'), value: plan.goldPercent },
             ];
             const Icon = GOAL_ICONS[goal.type];
             return (
               <motion.div key={goal.id} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.1 }}
-                className="rounded-xl border border-border bg-card p-5 shadow-card">
+                whileHover={{ y: -3 }}
+                className="glass-card rounded-2xl p-5 glass-card-hover">
                 <div className="flex items-start justify-between mb-4">
                   <div className="flex items-center gap-3">
-                    <div className="h-10 w-10 rounded-lg bg-accent flex items-center justify-center">
+                    <div className="h-10 w-10 rounded-xl bg-accent/60 flex items-center justify-center">
                       <Icon className="h-5 w-5 text-accent-foreground" />
                     </div>
                     <div>
                       <h3 className="font-display font-semibold text-foreground">{goal.name}</h3>
-                      <p className="text-xs text-muted-foreground">{goal.timelineYears} years • {formatINR(goal.targetAmount)}</p>
+                      <p className="text-xs text-muted-foreground">{goal.timelineYears} {t('years')} • {formatINR(goal.targetAmount)}</p>
                     </div>
                   </div>
                   <button onClick={() => removeGoal(goal.id)} className="text-muted-foreground hover:text-destructive transition-colors">
@@ -119,20 +122,18 @@ export default function GoalPlannerPage() {
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <div className="space-y-2 text-sm">
-                      <div className="flex justify-between">
-                        <span className="text-muted-foreground">Monthly SIP</span>
-                        <span className="font-semibold text-primary">{formatINR(plan.monthlySIP)}</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-muted-foreground">Expected Return</span>
-                        <span className="font-semibold text-foreground">{plan.expectedReturn.toFixed(1)}%</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-muted-foreground">Projected Value</span>
-                        <span className="font-semibold text-success">{formatINR(plan.projectedValue)}</span>
-                      </div>
+                  <div className="space-y-2 text-sm">
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">{t('monthlySIP')}</span>
+                      <span className="font-semibold text-primary">{formatINR(plan.monthlySIP)}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">{t('expectedReturn')}</span>
+                      <span className="font-semibold text-foreground">{plan.expectedReturn.toFixed(1)}%</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">{t('projectedValue')}</span>
+                      <span className="font-semibold text-success">{formatINR(plan.projectedValue)}</span>
                     </div>
                   </div>
                   <div>
