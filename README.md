@@ -1,4 +1,4 @@
-# Welcome to your Lovable project
+# Welcome to your CoupleWealth project
 
 # 💑 AI Couple Money Planner with Life-Event Coach
 
@@ -246,7 +246,11 @@ This project is licensed under the MIT License.
 
 ## 👩‍💻 Author
 
-Developed by [Your Name]
+Developed by
+K. Anju Sree
+K. Archita
+G. Mamatha
+K. Rakshitha
 
 ---
 
