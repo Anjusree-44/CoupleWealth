@@ -109,6 +109,10 @@ export default {
           from: { opacity: "0" },
           to: { opacity: "1" },
         },
+        shimmer: {
+          "0%": { backgroundPosition: "-200% 0" },
+          "100%": { backgroundPosition: "200% 0" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
@@ -116,6 +120,7 @@ export default {
         "score-fill": "score-fill 1.5s ease-out forwards",
         "fade-up": "fade-up 0.5s ease-out forwards",
         "count-up": "count-up 0.3s ease-out",
+        shimmer: "shimmer 2s linear infinite",
       },
     },
   },
